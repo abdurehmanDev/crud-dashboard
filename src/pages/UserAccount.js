@@ -450,8 +450,11 @@ const validationInput = Yup.object().shape({
             </Modal.Header>
             <Modal.Body>
               <Card style={{ width: '100%' }}>
+              <div><img src={employee[localStorage.getItem('editIndex')].employeeImg} alt="img" height="80px" width="80px"/></div>
                 <Card.Header><BsInfoCircle style={{ fontSize: '22px', paddingBottom: '2px' }} /><span className='card-info'>Personal Info</span></Card.Header>
                 <ListGroup variant="flush">
+                
+                <ListGroup.Item>Profile picture : <span className='card-value'></span></ListGroup.Item>
                   <ListGroup.Item>Employee ID : <span className='card-value'>{employee[localStorage.getItem('editIndex')].employeeId}</span></ListGroup.Item>
                   <ListGroup.Item>Name : <span className='card-value'>{employee[localStorage.getItem('editIndex')].employeeName}</span></ListGroup.Item>
                   <ListGroup.Item>Date of birth : <span className='card-value'><Moment format='Do MMM YYYY' style={{ fontWeight: '500' }}>{employee[localStorage.getItem('editIndex')].employeeDob}</Moment></span></ListGroup.Item>
