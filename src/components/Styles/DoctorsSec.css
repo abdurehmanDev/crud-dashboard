@@ -1,0 +1,70 @@
+.doc-image {
+    height: 4.6rem;
+    width: 5rem;
+    border-radius: 1rem;
+}
+
+.doc-section {
+    display: flex;
+    justify-content: flex-start;
+    font-weight: 600;
+}
+
+.num-people {
+    position: relative;
+    bottom: -11px;
+    margin-left: 8px;
+    font-size: 14px;
+    padding-top: 8rem;
+    top: 1rem;
+}
+
+.icon-style {
+    color: #5d49db;
+    border: 1px solid #ddd9f7;
+    font-size: 40px;
+    border-radius: 12px;
+    padding: 4px;
+    background-color: #ddd9f7;
+    margin-top: 24px;
+}
+
+.doc-rate-num {
+    border: 1px solid #4ad9c2;
+    padding: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 8px;
+    margin-left: 1px;
+    margin-right: 6px;
+    color: #4ad9c2;
+}
+
+@media (max-width:576px) {
+    .doc-rate-num {
+        font-size: 12px;
+    }
+    .star-res {
+        font-size: 12px;
+    }
+    .doc-section .spacing-name {
+        padding-left: .5rem!important;
+        padding-right: .5rem!important;
+        font-size: 14px;
+    }
+}
+
+.type-of-doc {
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: gray;
+}
+
+.container-doctor {
+    padding-bottom: 1rem;
+}
+
+.doc-section .spacing-name {
+    padding-right: 3rem;
+    padding-left: 1rem;
+}
