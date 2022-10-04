@@ -26,8 +26,8 @@ const Navbar = (props,{handleLogout}) => {
                   color: 'white'
                 }} onClick={showSidebar} />
               </Link>
-           
               </div>
+              
           <nav className={sidebar ? 'nav-menu' : 'nav-menu active'}>
           <ul className='nav-menu-items'>
               {SidebarData.map((item, index) => {

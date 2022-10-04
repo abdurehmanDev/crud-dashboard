@@ -15,11 +15,13 @@ import { AiOutlineDelete, AiOutlineEye, AiOutlinePlusCircle } from 'react-icons/
 import { FiEdit } from 'react-icons/fi';
 import { FaFemale, FaMale } from 'react-icons/fa';
 import { BsInfoCircle } from 'react-icons/bs';
+import { AiOutlineMail } from 'react-icons/ai';
+import { IoCallSharp } from 'react-icons/io5';
+import { BsCalendarDate } from 'react-icons/bs';
 import Moment from 'react-moment';
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import * as Yup from 'yup';
-//import { mixed } from 'yup/lib/locale';
 
 
 
@@ -30,19 +32,14 @@ const UserAccount = () => {
   const [deleteOption, setDeleteOption] = useState(false);
   const [showCard, setShowCard] = useState(false);
   const [addEdit, setAddEdit] = useState(true);
+  const [editImage, setEditImage] = useState(false);
   const inputFileRef = useRef();
- // const [croppedArea, setCroppedArea] = useState(null);
-	//const [crop, setCrop] = useState({ x: 0, y: 0 });
-//	const [zoom, setZoom] = useState(1);
-  //const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
-
-
-	// const onCropComplete = (croppedAreaPercentage, croppedAreaPixels) => {
-	// 	setCroppedArea(croppedAreaPixels);
-	// };
 
   const triggerFileSelectPopup = () => {
     inputFileRef.current.click();
+    setCropData(null);
+    setImage(null);
+    setEditImage(false);
   }
 
   let SrNO = 1;
@@ -60,7 +57,8 @@ const UserAccount = () => {
 
 
   const handleClose = () => {
-    setShow(false)
+    setShow(false);
+    setCropData(null);
   };
   const handleShow = () => {
     setShow(true);
@@ -69,39 +67,39 @@ const UserAccount = () => {
 
 
 
-function validateDob(value) {
-  let error;
-  if (!value) {
-    error = 'Required';
-  } else if (((Math.floor((new Date() - new Date(value).getTime()) / 3.15576e+10)) < 18) && ((Math.floor((new Date() - new Date(value).getTime()) / 3.15576e+10)) > 40)) {
-    error = 'Invalid age';
+  function validateDob(value) {
+    let error;
+    if (!value) {
+      error = 'Required';
+    } else if (((Math.floor((new Date() - new Date(value).getTime()) / 3.15576e+10)) < 18) && ((Math.floor((new Date() - new Date(value).getTime()) / 3.15576e+10)) > 40)) {
+      error = 'Invalid age';
+    }
+    return error;
   }
-  return error;
-}
 
-const validationInput = Yup.object().shape({
-  firstName: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  lastName: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  gender: Yup.string()
-    .required('Required'),
-  email: Yup.string(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i).email('Invalid email').required('Required'),
-  number: Yup.string()
-    .required('Required')
-    .matches(/^[6-9]\d{9}$/i, 'Invalid number'),
-  dob: Yup.string()
-    .required('Required'),
-  img: Yup
-    .mixed()
-    .nullable()
-    .required('Required')
+  const validationInput = Yup.object().shape({
+    firstName: Yup.string()
+      .min(2, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Required'),
+    lastName: Yup.string()
+      .min(2, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Required'),
+    gender: Yup.string()
+      .required('Required'),
+    email: Yup.string(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i).email('Invalid email').required('Required'),
+    number: Yup.string()
+      .required('Required')
+      .matches(/^[6-9]\d{9}$/i, 'Invalid number'),
+    dob: Yup.string()
+      .required('Required'),
+    img: Yup
+      .mixed()
+      .nullable()
+      .required('Required')
 
-});
+  });
 
 
   // push the employee object to array
@@ -129,6 +127,7 @@ const validationInput = Yup.object().shape({
     values.img = cropData;
     addEmployee(values);
     handleClose();
+    setCropData(null);
   };
 
 
@@ -155,9 +154,13 @@ const validationInput = Yup.object().shape({
       email: JSON.parse(localStorage.getItem('employee-array'))[index].employeeEmail,
       gender: JSON.parse(localStorage.getItem('employee-array'))[index].employeeGender,
       number: JSON.parse(localStorage.getItem('employee-array'))[index].employeeNumber,
-      dob: JSON.parse(localStorage.getItem('employee-array'))[index].employeeDob
+      dob: JSON.parse(localStorage.getItem('employee-array'))[index].employeeDob,
+      img:  JSON.parse(localStorage.getItem('employee-array'))[index].employeeImg
     }
+    setImage( JSON.parse(localStorage.getItem('employee-array'))[index].employeeImg);
     setFormValues(loadValues);
+    setEditImage(true);
+    setCropData(null);
     handleShow();
   }
 
@@ -171,6 +174,7 @@ const validationInput = Yup.object().shape({
     employee[localStorage.getItem('editIndex')].employeeDob = values.dob;
     employee[localStorage.getItem('editIndex')].employeeGender = values.gender;
     employee[localStorage.getItem('editIndex')].employeeNumber = values.number;
+    employee[localStorage.getItem('editIndex')].employeeImg = cropData
     employee[localStorage.getItem('editIndex')].employeeAge = Math.floor((new Date() - new Date(values.dob).getTime()) / 3.15576e+10);
     localStorage.setItem('employee-array', JSON.stringify(employee));
     handleClose();
@@ -212,21 +216,25 @@ const validationInput = Yup.object().shape({
 
   const [showUpload, setShowUpload] = useState(false);
 
-  const handleCloseUp = () => setShowUpload(false);
+  const handleCloseUp = () => {
+    setShowUpload(false);
+  } 
   const handleShowUp = () => setShowUpload(true);
   const [image, setImage] = useState(null);
-  const [cropData, setCropData] = useState("#");
+  const [cropData, setCropData] = useState(null);
   const [cropper, setCropper] = useState(null);
+  const [toggleView, setToggleView] = useState(false);
+  const handleShowTable = () => setToggleView(false);
+  const handleShowCard = () => setToggleView(true);
 
 
   const getCropData = () => {
     if (typeof cropper !== "undefined") {
       setCropData(cropper.getCroppedCanvas().toDataURL());
       handleCloseUp();
+      setImage(null);
     }
   };
-
-  // const onChange = 
 
 
   return (
@@ -236,15 +244,26 @@ const validationInput = Yup.object().shape({
       <Container className=''>
         <div className={state ? 'page-normal  spacing' : 'page-left spacing'}>
           <Hero heroHeading="CRUD Operation" />
-          <Button variant="primary" className='btn-add-new' onClick={handleAddNew}>
-            <AiOutlinePlusCircle style={{
-              fontSize: '1.4rem',
-              paddingBottom: '2px'
-            }} /><span>Add New</span>
-          </Button>
+          <div className='toggle-view'>
+            <div>
+              <Button variant="primary" className='btn-add-new' onClick={handleAddNew}>
+                <AiOutlinePlusCircle style={{
+                  fontSize: '1.4rem',
+                  paddingBottom: '2px'
+                }}/><span>Add New</span>
+              </Button>
+            </div>
+            <div className='view-option'>
+        
+              <label class="switch">
+  <input type="checkbox"/>
+  <span class="slider"></span>
+</label>
+            </div>
+          </div>
 
           {/* employee data table */}
-          <div className='table-wrapper'>
+          <div className={toggleView ? 'table-wrapper none' : 'table-wrapper' }>
             <Table className='main-table' striped bordered hover>
               <thead>
                 <tr>
@@ -301,6 +320,30 @@ const validationInput = Yup.object().shape({
             </Table>
           </div>
 
+
+          {/* data is in card form */}
+          { toggleView ?
+          <div className={toggleView ? 'card-form' : 'card-form none'}>
+            {employee.map((employees, index) => (
+              <div className='profile-card' key={index}>
+                <div className='banner'>
+                  <img src={employees.employeeImg} className="center-img" alt="pic" />
+                </div>
+                <h1 className='card-name'>{employees.employeeName}</h1>
+                <ul className='card-details'>
+                  <li className='gender'>{employees.employeeGender}</li>
+                  <li className='age'>{employees.employeeAge}</li>
+                  <li className='list-details email'>
+                  <AiOutlineMail style={{ fontSize: '28px', marginRight: '12px' }} />{employees.employeeEmail}</li>
+                  <li className='list-details'><IoCallSharp style={{ fontSize: '28px', marginRight: '12px' }} />{employees.employeeNumber}</li>
+                  <li className='list-details dob'><BsCalendarDate style={{ fontSize: '28px', marginRight: '12px' }} /><Moment format='Do MMM YYYY' style={{ fontWeight: '500' }}>{employees.employeeDob}</Moment></li>
+                </ul>
+              </div> 
+            )
+            )}
+          </div>
+        : null}
+        
           {/* modal box add employee form is wrapped in this */}
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -314,7 +357,7 @@ const validationInput = Yup.object().shape({
                   initialValues={formValues}
                   validationSchema={validationInput}
                   onSubmit={(addEdit) ? handleSubmit : handleUpdate}>
-                  {({ errors, touched, setFieldValue }) => (
+                  {({ errors, touched, setFieldValue}) => (
                     <Form>
                       <Row className='form-style'>
                         <div className="mb-3 form-group">
@@ -329,7 +372,7 @@ const validationInput = Yup.object().shape({
                             <div className='error-msg'>{errors.lastName}</div>
                           ) : null}
                         </div>
-                        <div className="mb-3 form-group">
+                        <div className=" form-group">
                           <Field type="number" name="number" className="form-control1" id="number" placeholder="Enter Phone Number..." />
                           {errors.number && touched.number ? <div className='error-msg'>{errors.number}</div> : null}
                         </div>
@@ -348,14 +391,14 @@ const validationInput = Yup.object().shape({
                           {errors.dob && touched.dob ? <div className='error-msg'>{errors.dob}</div> : null}
                         </div>
                         <label className='label-gender'>Gender :</label>
-                        <div className="mb-3 gender-select">
+                        <div className="gender-select">
                           <div className='form-check-radio radio-btn'>
                             <Field type="radio" name="gender" value="Male" className='form-check-input' id="Male" />
-                            <label className='form-check-label' htmlFor='Male'>Male</label>
+                            <label className='form-check-label' htmlFor='Male'><FaMale style={{ fontSize: '1.2rem' }} />Male</label>
                           </div>
                           <div className='form-check-radio'>
                             <Field type="radio" name="gender" value="Female" className='form-check-input' id="Female" />
-                            <label className='form-check-label' htmlFor='Female'>Female</label>
+                            <label className='form-check-label' htmlFor='Female'><FaFemale style={{fontSize: '1.2rem' }} />Female</label>
                           </div>
                         </div>
                         {errors.gender && touched.gender ? (
@@ -363,7 +406,8 @@ const validationInput = Yup.object().shape({
                         <input hidden id='img' ref={inputFileRef} type='file' onChange={
                           (e) => {
                             e.preventDefault();
-                            let files;
+                           
+                               let files;
                             if (e.dataTransfer) {
                               files = e.dataTransfer.files;
                             } else if (e.target) {
@@ -372,21 +416,21 @@ const validationInput = Yup.object().shape({
                             const reader = new FileReader();
                             reader.onload = () => {
                               setImage(reader.result);
-                              setFieldValue('img', reader.result);
+                              setFieldValue('img' , reader.result);
                             };
                             reader.readAsDataURL(files[0]);
-                   
                           }
-                        
+
                         } onClick={handleShowUp} />
-                 
+
                         <Button
                           color='primary'
-                          onClick={triggerFileSelectPopup}>
-                          Choose
+                          onClick={triggerFileSelectPopup} className="btn-upload-img">
+                          Choose image
                         </Button>
                         {errors.img && touched.img ? <div className='error-msg'>{errors.img}</div> : null}
-                        {image ? <img width={"100%"} src={cropData} alt="cropped" />: "loading"}
+                        {cropData && "image uploaded successfully"}
+                        { editImage ? <img src={image} alt="user-pic"/> : null}
                       </Row>
                       {(!addEdit) &&
                         <Button type='submit' className="form-btn" variant="primary">
@@ -405,41 +449,38 @@ const validationInput = Yup.object().shape({
           </Modal>
 
 
-      {/* modal box for crop image */}
-    			{image ? ( <Modal show={showUpload} onHide={handleCloseUp}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <div className='container-cropper'>
-						<div className='cropper'>
-            <Cropper
-          style={{ width: "100%" }}
-          zoomTo={0.5}
-          initialAspectRatio={1/1}
-          src={image}
-          viewMode={1}
-          minCropBoxHeight={200}
-          minCropBoxWidth={200}
-          background={false}
-          autoCropArea={1}
-          checkOrientation={false} 
-          onInitialized={(instance) => {
-            setCropper(instance);
-          }}
-          guides={true}
-        />
+          {/* modal box for crop image */}
+          {image ? (<Modal show={showUpload} onHide={handleCloseUp}>
+            <Modal.Header closeButton>
+            </Modal.Header>
+            <Modal.Body>
+              <div className='container-cropper'>
+                <div className='cropper'>
+                  <Cropper
+                    style={{ width: "100%" }}
+                    zoomTo={0.5}
+                    initialAspectRatio={1 / 1}
+                    src={image}
+                    viewMode={1}
+                    minCropBoxHeight={200}
+                    minCropBoxWidth={200}
+                    background={false}
+                    autoCropArea={1}
+                    checkOrientation={false}
+                    onInitialized={(instance) => {
+                      setCropper(instance);
+                    }}
+                    guides={true}
+                  />
+                </div>
+              </div>
+              <Button className='btn-crop' style={{ float: "center" }} onClick={getCropData}>
+                Crop Image
+              </Button>
+            </Modal.Body>
 
-						</div>
-			   </div>
-      <Button className='btn-crop' style={{ float: "center" }} onClick={getCropData}>
-              Crop Image
-            </Button> 
-    
-          </Modal.Body>
-       
-      </Modal>
-	) : null}
+          </Modal>
+          ) : null}
 
 
 
@@ -450,11 +491,12 @@ const validationInput = Yup.object().shape({
             </Modal.Header>
             <Modal.Body>
               <Card style={{ width: '100%' }}>
-              <div><img src={employee[localStorage.getItem('editIndex')].employeeImg} alt="img" height="80px" width="80px"/></div>
+            
                 <Card.Header><BsInfoCircle style={{ fontSize: '22px', paddingBottom: '2px' }} /><span className='card-info'>Personal Info</span></Card.Header>
                 <ListGroup variant="flush">
-                
-                <ListGroup.Item>Profile picture : <span className='card-value'></span></ListGroup.Item>
+                  <ListGroup.Item> 
+                  <img src={employee[localStorage.getItem('editIndex')].employeeImg} className="center-img" alt="pic" />
+                </ListGroup.Item>
                   <ListGroup.Item>Employee ID : <span className='card-value'>{employee[localStorage.getItem('editIndex')].employeeId}</span></ListGroup.Item>
                   <ListGroup.Item>Name : <span className='card-value'>{employee[localStorage.getItem('editIndex')].employeeName}</span></ListGroup.Item>
                   <ListGroup.Item>Date of birth : <span className='card-value'><Moment format='Do MMM YYYY' style={{ fontWeight: '500' }}>{employee[localStorage.getItem('editIndex')].employeeDob}</Moment></span></ListGroup.Item>
