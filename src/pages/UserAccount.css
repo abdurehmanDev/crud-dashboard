@@ -221,6 +221,34 @@ input[type=number] {
     width: 100%;
 }
 
+.main-table thead {
+    border: 1px solid #80808082;
+}
+
+.main-table th {
+    padding: 16px 8px;
+    background-color: #80808024;
+}
+
+.main-table td {
+    text-align: left;
+    padding: 8px;
+    font-weight: 500;
+}
+
+.main-table tr {
+    border: 1px solid #80808082;
+    padding: 8px;
+}
+
+.main-table .table-row:hover {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.main-table tr:last-child {
+    border-bottom-color: #80808082;
+}
+
 .profile-card {
     word-wrap: break-word;
     background-color: #fff;
@@ -238,11 +266,20 @@ input[type=number] {
     .card-form {
         display: block!important;
     }
+    .action-btn-container {
+        transform: unset!important;
+        transform-origin: unset!important;
+        transition: unset!important;
+    }
+    .animated-btn {
+        opacity: 1!important;
+    }
 }
 
 @media (min-width:576px) {
     .list-details {
-        padding-left: 3rem!important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
 }
 
@@ -257,6 +294,7 @@ input[type=number] {
     list-style: none;
     padding-left: unset;
     font-size: 14px;
+    margin-bottom: unset;
 }
 
 .center-img {
@@ -270,13 +308,9 @@ input[type=number] {
 }
 
 .list-details {
-    padding: 8px;
     padding-top: 8px;
-    padding-left: 4rem;
-}
-
-.list-details.email {
-    padding-top: 18px;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
 }
 
 .card-details .gender {
@@ -287,9 +321,11 @@ input[type=number] {
     text-align: center;
 }
 
+
+/* 
 .card-details .dob {
     padding-bottom: 1rem;
-}
+} */
 
 .banner {
     width: 100%;
@@ -337,7 +373,7 @@ input[type=number] {
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
+    width: 68px;
     height: 34px;
 }
 
@@ -360,19 +396,19 @@ input[type=number] {
 }
 
 .slider:before {
+    content: "Table";
     position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
+    top: 4px;
     left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-input:checked+.slider {
-    background-color: #2196F3;
+    width: 34px;
+    height: 26px;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+    padding: 9px 4px;
+    background-color: #03a9f4;
 }
 
 input:focus+.slider {
@@ -380,6 +416,8 @@ input:focus+.slider {
 }
 
 input:checked+.slider:before {
+    content: "Grid";
+    background-color: #51459e;
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
@@ -394,6 +432,81 @@ input:checked+.slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+.span-check-text {
+    position: relative;
+    right: -36px;
+    font-size: 11px;
+    top: 4px;
+    color: white;
+}
+
+.span-check-text2 {
+    position: relative;
+    right: 1px;
+    font-size: 10px;
+    top: 4px;
+    color: white;
+}
+
+.animated-btn {
+    width: 110px;
+    height: 64px;
+    transition: opacity .45s;
+    background-color: gainsboro;
+    border-right-style: hidden;
+    border-top-left-radius: 120px;
+    opacity: 0;
+    padding: 5px 0 0 5px;
+}
+
+.profile-card:hover .animated-btn {
+    opacity: 1;
+}
+
+.profile-card:hover {
+    cursor: pointer;
+}
+
+.action-btn-container {
+    transform: scale(0);
+    transform-origin: bottom right;
+    transition: transform .8s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+}
+
+.profile-card:hover .action-btn-container {
+    transform: scale(1);
+}
+
+.update-user-option {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.action-icon-edit {
+    left: 16px;
+    position: relative;
+    top: 24px;
+}
+
+.action-icon-delete {
+    left: 12px;
+    position: relative;
+    top: 6px;
+}
+
+.action-icon-view {
+    left: 10px;
+    position: relative;
+    bottom: 1px;
+}
+
+.crop-container {
+    padding: 14px;
+    border: 1px solid darkgray;
+    margin: 2px;
+    padding-bottom: 40px;
 }
 
 

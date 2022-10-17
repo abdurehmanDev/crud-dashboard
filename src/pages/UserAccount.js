@@ -4,20 +4,19 @@ import { Formik, Form, Field } from 'formik';
 import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
-import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import './UserAccount.css';
 import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
-import { AiOutlineDelete, AiOutlineEye, AiOutlinePlusCircle } from 'react-icons/ai';
+import { AiOutlineDelete, AiOutlineEye, AiOutlinePlusCircle, AiOutlineClose } from 'react-icons/ai';
 import { FiEdit } from 'react-icons/fi';
 import { FaFemale, FaMale } from 'react-icons/fa';
 import { BsInfoCircle } from 'react-icons/bs';
 import { AiOutlineMail } from 'react-icons/ai';
 import { IoCallSharp } from 'react-icons/io5';
-import { BsCalendarDate } from 'react-icons/bs';
+import { BiCalendar } from 'react-icons/bi';
 import Moment from 'react-moment';
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
@@ -33,6 +32,8 @@ const UserAccount = () => {
   const [showCard, setShowCard] = useState(false);
   const [addEdit, setAddEdit] = useState(true);
   const [editImage, setEditImage] = useState(false);
+  const [gridView, setGridView] = useState(false);
+  const [tableView, setTableView] = useState(true);
   const inputFileRef = useRef();
 
   const triggerFileSelectPopup = () => {
@@ -155,9 +156,9 @@ const UserAccount = () => {
       gender: JSON.parse(localStorage.getItem('employee-array'))[index].employeeGender,
       number: JSON.parse(localStorage.getItem('employee-array'))[index].employeeNumber,
       dob: JSON.parse(localStorage.getItem('employee-array'))[index].employeeDob,
-      img:  JSON.parse(localStorage.getItem('employee-array'))[index].employeeImg
+      img: JSON.parse(localStorage.getItem('employee-array'))[index].employeeImg
     }
-    setImage( JSON.parse(localStorage.getItem('employee-array'))[index].employeeImg);
+    setImage(JSON.parse(localStorage.getItem('employee-array'))[index].employeeImg);
     setFormValues(loadValues);
     setEditImage(true);
     setCropData(null);
@@ -208,6 +209,7 @@ const UserAccount = () => {
     handleShow();
     setAddEdit(true);
     setFormValues(initialValues);
+    setEditImage(false);
   }
   const [state, setState] = useState(false);
   const conToggle = () => {
@@ -218,14 +220,11 @@ const UserAccount = () => {
 
   const handleCloseUp = () => {
     setShowUpload(false);
-  } 
+  }
   const handleShowUp = () => setShowUpload(true);
   const [image, setImage] = useState(null);
   const [cropData, setCropData] = useState(null);
   const [cropper, setCropper] = useState(null);
-  const [toggleView, setToggleView] = useState(false);
-  const handleShowTable = () => setToggleView(false);
-  const handleShowCard = () => setToggleView(true);
 
 
   const getCropData = () => {
@@ -235,6 +234,11 @@ const UserAccount = () => {
       setImage(null);
     }
   };
+
+  const handleGrid = () => {
+    setGridView(!gridView);
+    setTableView(!tableView);
+  }
 
 
   return (
@@ -250,100 +254,199 @@ const UserAccount = () => {
                 <AiOutlinePlusCircle style={{
                   fontSize: '1.4rem',
                   paddingBottom: '2px'
-                }}/><span>Add New</span>
+                }} /><span>Add New</span>
               </Button>
             </div>
             <div className='view-option'>
-        
-              <label class="switch">
-  <input type="checkbox"/>
-  <span class="slider"></span>
-</label>
+              <label className="switch">
+                <input type="checkbox" onChange={handleGrid} />
+                <span className="slider"></span>
+                {tableView ? <span className='span-check-text'>Grid</span> : null}
+                {gridView ? <span className='span-check-text2'>Table</span> : null}
+              </label>
             </div>
           </div>
 
           {/* employee data table */}
-          <div className={toggleView ? 'table-wrapper none' : 'table-wrapper' }>
-            <Table className='main-table' striped bordered hover>
-              <thead>
-                <tr>
-                  <th className='th'>Sr. No.</th>
-                  <th className='th'>Photo</th>
-                  <th className='th'>EMP ID</th>
-                  <th className='th'>Full Name</th>
-                  <th className='th'>Email ID</th>
-                  <th className='th'>Mobile Number</th>
-                  <th className='th'>Date of Birth</th>
-                  <th className='th'>Age</th>
-                  <th className='th'>Gender</th>
-                  <th className='th'>Action</th>
-                </tr>
-              </thead>
-              <tbody className='table-employee'>
-                {employee.map((employees, index) => (
-                  <tr key={index}>
-                    <td className='td'>{SrNO++}</td>
-                    <td className='td'><img src={employees.employeeImg} alt="img" height="80px" width="80px" /></td>
-                    <td className='td emp-id'>{employees.employeeId}</td>
-                    <td className='td'>{employees.employeeName}</td>
-                    <td className='td'>{employees.employeeEmail}</td>
-                    <td className='td'>{employees.employeeNumber}</td>
-                    <td className='td'><Moment format='Do MMM YYYY' style={{ fontWeight: '500' }}>{employees.employeeDob}</Moment></td>
-                    <td className='td'>{employees.employeeAge}</td>
-                    <td className='td'>{employees.employeeGender}</td>
-                    <td className='td'>
-                      <FiEdit style={{
-                        fontSize: '1.2rem',
-                        marginRight: '10px',
-                        cursor: 'pointer',
-                        color: '#a4a446de'
-                      }} className='action-icon'
-                        onClick={() => handleEdit(index)} />
-                      <AiOutlineDelete style={{
-                        fontSize: '1.4rem',
-                        marginRight: '10px',
-                        cursor: 'pointer',
-                        color: '#f41a1a'
-                      }} className='action-icon' onClick={() => handleDelete(index)} />
-                      <AiOutlineEye style={{
-                        fontSize: '1.6rem',
-                        marginRight: '10px',
-                        cursor: 'pointer',
-                        color: '#048e04'
-                      }} className='action-icon' onClick={() => handleView(index)} />
-                    </td>
+          {tableView ?
+            // <div className='table-wrapper'>
+            //   <Table className='main-table' striped bordered hover>
+            //     <thead>
+            //       <tr>
+            //         <th className='th'>Sr. No.</th>
+            //         <th className='th'>Photo</th>
+            //         <th className='th'>EMP ID</th>
+            //         <th className='th'>Full Name</th>
+            //         <th className='th'>Email ID</th>
+            //         <th className='th'>Mobile Number</th>
+            //         <th className='th'>Date of Birth</th>
+            //         <th className='th'>Age</th>
+            //         <th className='th'>Gender</th>
+            //         <th className='th'>Action</th>
+            //       </tr>
+            //     </thead>
+            //     <tbody className='table-employee'>
+            //       {employee.map((employees, index) => (
+            //         <tr key={index}>
+            //           <td className='td'>{SrNO++}</td>
+            //           <td className='td'><img src={employees.employeeImg} alt="img" height="80px" width="80px" /></td>
+            //           <td className='td emp-id'>{employees.employeeId}</td>
+            //           <td className='td'>{employees.employeeName}</td>
+            //           <td className='td'>{employees.employeeEmail}</td>
+            //           <td className='td'>{employees.employeeNumber}</td>
+            //           <td className='td'><Moment format='Do MMM YYYY' style={{ fontWeight: '500' }}>{employees.employeeDob}</Moment></td>
+            //           <td className='td'>{employees.employeeAge}</td>
+            //           <td className='td'>{employees.employeeGender}</td>
+            //           <td className='td'>
+            //             <FiEdit style={{
+            //               fontSize: '1.2rem',
+            //               marginRight: '10px',
+            //               cursor: 'pointer',
+            //               color: '#a4a446de'
+            //             }} className='action-icon'
+            //               onClick={() => handleEdit(index)} />
+            //             <AiOutlineDelete style={{
+            //               fontSize: '1.4rem',
+            //               marginRight: '10px',
+            //               cursor: 'pointer',
+            //               color: '#f41a1a'
+            //             }} className='action-icon' onClick={() => handleDelete(index)} />
+            //             <AiOutlineEye style={{
+            //               fontSize: '1.6rem',
+            //               marginRight: '10px',
+            //               cursor: 'pointer',
+            //               color: '#048e04'
+            //             }} className='action-icon' onClick={() => handleView(index)} />
+            //           </td>
 
+            //         </tr>
+            //       )
+            //       )}
+            //     </tbody>
+            //   </Table>
+            // </div>
+
+
+            //       <div className=''>
+            //    <Container>
+            //   <Row md={4}>
+            //     <Col>Sr. No.</Col>
+            //     <Col>Photo</Col>
+            //     <Col>EMP ID</Col>
+            //     <Col>Full Name</Col>
+            //     <Col>Email ID</Col>
+            //     <Col>Mobile Number</Col>
+            //     <Col>Date of Birth</Col>
+            //     <Col>Age</Col>
+            //     <Col>Gender</Col>
+            //     <Col>Action</Col>
+            //   </Row>
+            // </Container>
+            //         </div>
+
+            <div className='table-wrapper'>
+              <table className='main-table'>
+                <thead>
+                  <tr>
+                    <th scope="col">Sr. No.</th>
+                    <th scope="col">EMP ID</th>
+                    <th scope="col">Photo</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Mobile Number</th>
+                    <th scope="col">DOB / Age</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Action</th>
                   </tr>
-                )
-                )}
-              </tbody>
-            </Table>
-          </div>
+                </thead>
+                <tbody>
+                  {employee.map((employees, index) => (
+                    <tr className='table-row' key={index}>
+                      <td>{SrNO++}</td>
+                      <td className='emp-id'>{employees.employeeId}</td>
+                      <td><img src={employees.employeeImg} alt="img" height="40px" width="40px" /></td>
+                      <td>{employees.employeeName}</td>
+                      <td>{employees.employeeEmail}</td>
+                      <td>{employees.employeeNumber}</td>
+                      <td><Moment format='Do MMM YYYY' style={{ fontWeight: '500' }}>{employees.employeeDob}</Moment> / {employees.employeeAge}</td>
+                      <td>{employees.employeeGender}</td>
+                      <td>
+                        <FiEdit style={{
+                          fontSize: '1.2rem',
+                          marginRight: '10px',
+                          cursor: 'pointer',
+                          color: '#a4a446de'
+                        }} className='action-icon'
+                          onClick={() => handleEdit(index)} />
+                        <AiOutlineDelete style={{
+                          fontSize: '1.4rem',
+                          marginRight: '10px',
+                          cursor: 'pointer',
+                          color: '#f41a1a'
+                        }} className='action-icon' onClick={() => handleDelete(index)} />
+                        <AiOutlineEye style={{
+                          fontSize: '1.6rem',
+                          marginRight: '10px',
+                          cursor: 'pointer',
+                          color: '#048e04'
+                        }} className='action-icon' onClick={() => handleView(index)} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            : null}
 
 
           {/* data is in card form */}
-          { toggleView ?
-          <div className={toggleView ? 'card-form' : 'card-form none'}>
-            {employee.map((employees, index) => (
-              <div className='profile-card' key={index}>
-                <div className='banner'>
-                  <img src={employees.employeeImg} className="center-img" alt="pic" />
+          {gridView ?
+            <div className='card-form'>
+              {employee.map((employees, index) => (
+                <div className='profile-card' key={index}>
+                  <div className='banner'>
+                    <img src={employees.employeeImg} className="center-img" alt="pic" />
+                  </div>
+                  <h1 className='card-name'>{employees.employeeName}</h1>
+                  <ul className='card-details'>
+                    <li className='gender'>{employees.employeeGender}</li>
+                    <li className='age'>{employees.employeeAge}</li>
+                    <li className='list-details email'>
+                      <AiOutlineMail style={{ fontSize: '28px', marginRight: '12px' }} />{employees.employeeEmail}</li>
+                    <li className='list-details'><IoCallSharp style={{ fontSize: '28px', marginRight: '12px' }} />{employees.employeeNumber}</li>
+                    <li className='list-details dob'><BiCalendar style={{ fontSize: '28px', marginRight: '12px' }} /><Moment format='Do MMM YYYY' style={{ fontWeight: '600' }}>{employees.employeeDob}</Moment></li>
+                  </ul>
+                  <div className='update-user-option'>
+                    <div className='animated-btn'>
+                      <div className='action-btn-container'>
+                        <FiEdit style={{
+                          fontSize: '1.2rem',
+                          marginRight: '10px',
+                          cursor: 'pointer',
+                          color: '#a4a446de',
+                        }} className='action-icon-edit'
+                          onClick={() => handleEdit(index)} />
+
+                        <AiOutlineDelete style={{
+                          fontSize: '1.4rem',
+                          marginRight: '10px',
+                          cursor: 'pointer',
+                          color: '#f41a1a',
+                        }} className='action-icon-delete' onClick={() => handleDelete(index)} />
+                        <AiOutlineEye style={{
+                          fontSize: '1.6rem',
+                          marginRight: '10px',
+                          cursor: 'pointer',
+                          color: '#048e04',
+                        }} className='action-icon-view' onClick={() => handleView(index)} />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <h1 className='card-name'>{employees.employeeName}</h1>
-                <ul className='card-details'>
-                  <li className='gender'>{employees.employeeGender}</li>
-                  <li className='age'>{employees.employeeAge}</li>
-                  <li className='list-details email'>
-                  <AiOutlineMail style={{ fontSize: '28px', marginRight: '12px' }} />{employees.employeeEmail}</li>
-                  <li className='list-details'><IoCallSharp style={{ fontSize: '28px', marginRight: '12px' }} />{employees.employeeNumber}</li>
-                  <li className='list-details dob'><BsCalendarDate style={{ fontSize: '28px', marginRight: '12px' }} /><Moment format='Do MMM YYYY' style={{ fontWeight: '500' }}>{employees.employeeDob}</Moment></li>
-                </ul>
-              </div> 
-            )
-            )}
-          </div>
-        : null}
-        
+              )
+              )}
+            </div> : null}
+
           {/* modal box add employee form is wrapped in this */}
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -357,7 +460,7 @@ const UserAccount = () => {
                   initialValues={formValues}
                   validationSchema={validationInput}
                   onSubmit={(addEdit) ? handleSubmit : handleUpdate}>
-                  {({ errors, touched, setFieldValue}) => (
+                  {({ errors, touched, setFieldValue }) => (
                     <Form>
                       <Row className='form-style'>
                         <div className="mb-3 form-group">
@@ -398,7 +501,7 @@ const UserAccount = () => {
                           </div>
                           <div className='form-check-radio'>
                             <Field type="radio" name="gender" value="Female" className='form-check-input' id="Female" />
-                            <label className='form-check-label' htmlFor='Female'><FaFemale style={{fontSize: '1.2rem' }} />Female</label>
+                            <label className='form-check-label' htmlFor='Female'><FaFemale style={{ fontSize: '1.2rem' }} />Female</label>
                           </div>
                         </div>
                         {errors.gender && touched.gender ? (
@@ -406,8 +509,8 @@ const UserAccount = () => {
                         <input hidden id='img' ref={inputFileRef} type='file' onChange={
                           (e) => {
                             e.preventDefault();
-                           
-                               let files;
+
+                            let files;
                             if (e.dataTransfer) {
                               files = e.dataTransfer.files;
                             } else if (e.target) {
@@ -416,7 +519,7 @@ const UserAccount = () => {
                             const reader = new FileReader();
                             reader.onload = () => {
                               setImage(reader.result);
-                              setFieldValue('img' , reader.result);
+                              setFieldValue('img', reader.result);
                             };
                             reader.readAsDataURL(files[0]);
                           }
@@ -429,8 +532,17 @@ const UserAccount = () => {
                           Choose image
                         </Button>
                         {errors.img && touched.img ? <div className='error-msg'>{errors.img}</div> : null}
-                        {cropData && "image uploaded successfully"}
-                        { editImage ? <img src={image} alt="user-pic"/> : null}
+                        {cropData &&
+                          <div className='crop-container'>
+                            <AiOutlineClose style={{
+                              float: 'right',
+                              fontSize: '24px'
+                            }} />
+                            <img src={cropData} alt="user-pic" height='100%'
+                              width='100%' />
+                          </div>
+                        }
+                        {editImage ? <img src={image} alt="user-pic" /> : null}
                       </Row>
                       {(!addEdit) &&
                         <Button type='submit' className="form-btn" variant="primary">
@@ -459,7 +571,7 @@ const UserAccount = () => {
                   <Cropper
                     style={{ width: "100%" }}
                     zoomTo={0.5}
-                    initialAspectRatio={1 / 1}
+                    aspect={1}
                     src={image}
                     viewMode={1}
                     minCropBoxHeight={200}
@@ -491,12 +603,12 @@ const UserAccount = () => {
             </Modal.Header>
             <Modal.Body>
               <Card style={{ width: '100%' }}>
-            
+
                 <Card.Header><BsInfoCircle style={{ fontSize: '22px', paddingBottom: '2px' }} /><span className='card-info'>Personal Info</span></Card.Header>
                 <ListGroup variant="flush">
-                  <ListGroup.Item> 
-                  <img src={employee[localStorage.getItem('editIndex')].employeeImg} className="center-img" alt="pic" />
-                </ListGroup.Item>
+                  <ListGroup.Item>
+                    <img src={employee[localStorage.getItem('editIndex')].employeeImg} className="center-img" alt="pic" />
+                  </ListGroup.Item>
                   <ListGroup.Item>Employee ID : <span className='card-value'>{employee[localStorage.getItem('editIndex')].employeeId}</span></ListGroup.Item>
                   <ListGroup.Item>Name : <span className='card-value'>{employee[localStorage.getItem('editIndex')].employeeName}</span></ListGroup.Item>
                   <ListGroup.Item>Date of birth : <span className='card-value'><Moment format='Do MMM YYYY' style={{ fontWeight: '500' }}>{employee[localStorage.getItem('editIndex')].employeeDob}</Moment></span></ListGroup.Item>
